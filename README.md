@@ -1,6 +1,8 @@
 bati-fusion
 ===========
 
+--
+
 Welcome on the bati-fusion github site. bati-fusion is a utility mainly of interest to french users of Open Street Map who import french cadastre.
 
 --
