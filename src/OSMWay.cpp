@@ -71,7 +71,7 @@ OSMWay::OSMWay(const std::map<int, OSMNode *> & input_nodes, TiXmlElement * elem
             //std::cout << "Way Reading key: " << key << " value: " << value << std::endl;
             tags[key] = value;
             
-            if ((key == "building") && (value == "yes"))
+            if ((key == "building") && (value != "no"))
                building = true;
          }
       }
