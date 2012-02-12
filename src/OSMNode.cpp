@@ -92,9 +92,13 @@ void OSMNode::clone(const OSMNode & original)
    
    if (original.x_string)
       x_string = new std::string(*original.x_string);
+   else
+      x_string = 0;
    
    if (original.y_string)
       y_string = new std::string(*original.y_string);
+   else
+      y_string = 0;
    
    tags = original.tags;
 }
