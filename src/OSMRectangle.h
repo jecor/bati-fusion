@@ -26,11 +26,12 @@ class OSMRectangle
 {
 public:
    
-   OSMRectangle(const double x1, const double y1, const double x2, const double y2);
+   OSMRectangle(const double x1 = 0, const double y1 = 0, const double x2 = 0, const double y2 = 0);
    
    double getArea() const { return (fabs(p1.getX()-p2.getX()) * fabs(p1.getY()-p2.getY())); }
    
    bool isZero() const { return ((p1.getX() == 0) && (p1.getY() == 0) && (p2.getX() == 0) && (p2.getY() == 0)); }
+   bool isInside(const OSMRectangle & r);
    
    const OSMNode & getP1() const { return p1; }
    const OSMNode & getP2() const { return p2; }

@@ -20,8 +20,8 @@
 #include <algorithm>
 
 OSMRectangle::OSMRectangle(const double x1, const double y1, const double x2, const double y2) :
-   p1(x1, y1),
-   p2(x2, y2)
+   p1(std::min(x1, x2), std::min(y1, y2)),
+   p2(std::max(x1, x2), std::max(y1, y2))
 {
 }
 
@@ -42,6 +42,14 @@ OSMRectangle intersection(const OSMRectangle & r1, const OSMRectangle & r2)
    {
       return OSMRectangle(0, 0, 0, 0);
    }       
+}
+
+bool OSMRectangle::isInside(const OSMRectangle & r)
+{
+   return ((p1.getX() >= r.p1.getX()) &&
+           (p2.getX() <= r.p2.getX()) &&
+           (p1.getY() >= r.p1.getY()) &&
+           (p2.getY() <= r.p2.getY()));
 }
 
 std::ostream & operator<<(std::ostream & os, const OSMRectangle & r)
