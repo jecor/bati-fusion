@@ -1,5 +1,5 @@
 --------------------------------------------
-bati-fusion 0.1
+bati-fusion 0.2
 Copyright (c) 2010-2011 Jérôme Cornet
 --------------------------------------------
 
@@ -8,13 +8,17 @@ Copyright (c) 2010-2011 Jérôme Cornet
 bati-fusion est un outil d'aide à l'import bati sur des communes possédant déjà des bâtiments tracés à la main et porteurs d'informations (addresses, tags divers) non présentes dans les calques d'import bati.
 C'est un outil semi-automatique, dans le sens où les fichiers de sortie ne sont pas directement importables dans OSM, et nécessite une passe de vérification manuelle.
 
-Prérequis
+Prérequis (inutiles si vous avez téléchargés une version binaire dans la section "Downloads")
 ---------------------------------------------
  - GNU Make (gmake sur certains systèmes)
  - GCC/G++ (testé à partir de la version 4)
 
 Compilation / Installation
 --------------------------------------------
+
+Note: si vous avez téléchargé une version binaire (section "Downloads"),
+il est inutile de lancer les commandes demandées dans cette section, l'exécutable
+bati-fusion (ou bati-fusion.exe) est prêt à l'emploi.
 
  - Se placer au niveau de ce LISEZMOI
  - Taper make (ou gmake)
@@ -45,6 +49,7 @@ recherche si un bâtiment existe déjà dans la base (calque-courant) au même e
 - Dans le fichier No Fusion (.nofusion.osm): les bâtiments qui ont a priori une intersection avec un bâtiment existant, mais considérés comme dans la marge d'erreur de l'algorithme d'intersection (voir plus loin sur les intersections). Il est probable que ces bâtiments n'aient pas d'intersection du tout avec un bâti existant, mais il est nécessaire d'effectuer une vérification manuelle.
 - Dans le fichier Fusion (.fusion.osm): les bâtiments qui sont en intersection franche avec un bâtiment existant dans la base. Dans ce cas, les tags éventuels du bâtiment de la base, non relatifs au bâti (building=) et à la source (source=) sont importés, pour les nœuds et pour le polygone en lui même.
 - Dans le fichier Conflit (.conflit.osm): les bâtiments pour lesquels l'outil n'a pas pu prendre de décisions. Les bâtiments sont recopiés tels quels, sans import de tags.
+- Dans le fichier Exclus (.exclus.osm): les bâtiments en dehors de la zone couverte par le calque courant. Il est fortement recommandé de toujours réaliser la fusion en prenant un calque courant couvrant toute la commune, mais sur certaines zones "chargées", cela n'est pas possible. Dans ce cas, seuls les polygones situés dans la zone couverte sont considérés pour la fusion et il est nécessaire d'être de réaliser la fusion en plusieur étapes. La zone couverte considérée est celle déclarée dans le calque courant (sous JOSM les partie hors de cette zone sont hachurées).
 
 En raison de la difficulté à calculer exactement les intersections de polygones (algorithme coûteux en temps), bati-fusion se base sur les rectangles englobant les polygones. Cette méthode produit évidemment de faux positifs (fichier No Fusion) ainsi que des faux négatifs (fichier Conflit).
 
@@ -61,5 +66,4 @@ Limitations
 --------------------------------------------
 
 - (à revérifier): problèmes éventuels lors de l'import d'un bâtiments faisant partie d'une relation multipolygon.
-- Certains bâtiments (comme les hôpitaux ou autres "amenity") ne sont pas taggés comme du bâti, et ne sont donc pas vu par l'outil.
 
