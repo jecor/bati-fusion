@@ -81,6 +81,16 @@ OSMDocument::OSMDocument(const char * filename)
          if (relation->isMultipolygon())
             relations[relation->getID()] = relation;
       }
+      else if (element->Value() == std::string("bounds"))
+      {
+         double x1, x2, y1, y2;
+         element->QueryDoubleAttribute("minlon", &x1);
+         element->QueryDoubleAttribute("maxlon", &x2);
+         element->QueryDoubleAttribute("minlat", &y1);
+         element->QueryDoubleAttribute("maxlat", &y2);
+         
+         boundingBox = OSMRectangle(x1, y1, x2, y2);
+      }
    }
 }
 
@@ -201,6 +211,42 @@ void OSMDocument::addWayPointerUID(OSMWay * way)
    ways[newID] = way;
 }
 
+OSMRectangle OSMDocument::getBoundingBox() const
+{
+   if (!boundingBox.isZero())
+   {
+      return boundingBox;
+   }
+   else
+   {
+      double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+      
+      unsigned int i=0;
+      for (NodesConstIterator it=nodes.begin(); it != nodes.end(); i++, ++it)
+      {
+         const OSMNode * node = (*it).second;
+         if (i == 0)
+         {
+            x1 = x2 = node->getX();
+            y1 = y2 = node->getY();
+         }
+         else
+         {
+            if (node->getX() < x1)
+               x1 = node->getX();
+            if (node->getX() > x2)
+               x2 = node->getX();
+            if (node->getY() < y1)
+               y1 = node->getY();
+            if (node->getY() > y2)
+               y2 = node->getY();
+         }
+      }
+      
+      return OSMRectangle(x1, y1, x2, y2);
+   }
+}
+
 void OSMDocument::dumpOSM(const std::string & fileName) const
 {
    std::ofstream os(fileName.c_str());
@@ -296,12 +342,15 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
    OSMDocument *noFusionDoc = new OSMDocument;
    OSMDocument *fusionDoc = new OSMDocument;
    OSMDocument *conflitDoc = new OSMDocument;
+   OSMDocument *exclusDoc = new OSMDocument;
    
    unsigned int nbOK = 0;
    unsigned int nbNoFusion = 0;
    unsigned int nbFusion = 0;
    unsigned int nbConflit = 0;
+   unsigned int nbExclus = 0;
    
+   OSMRectangle bounds = current.getBoundingBox();
    
    for (std::map<int, OSMWay *>::const_iterator itBati = bati.ways.begin(); itBati != bati.ways.end(); ++itBati)
    {
@@ -309,113 +358,121 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
       
       if (batiWay.isBuilding())
       {
-         std::vector<std::pair<const OSMWay *, double> > intersections;
-         
-         bool firstDisplay = true;
-         
-         for (std::map<int, OSMWay *>::const_iterator itCurrent = current.ways.begin(); itCurrent != current.ways.end(); ++itCurrent)
+         if (batiWay.getBoundingBox().isInside(bounds))
          {
-            const OSMWay & currentWay = *(*itCurrent).second;
+            std::vector<std::pair<const OSMWay *, double> > intersections;
             
-            if (currentWay.isBuilding())
+            bool firstDisplay = true;
+            
+            for (std::map<int, OSMWay *>::const_iterator itCurrent = current.ways.begin(); itCurrent != current.ways.end(); ++itCurrent)
             {
-               OSMRectangle r = intersection(currentWay.getBoundingBox(), batiWay.getBoundingBox());
+               const OSMWay & currentWay = *(*itCurrent).second;
                
-               //std::cout << "intersection de bati id " << batiWay.getID() << " et current id " << currentWay.getID();
-               //std::cout << ": " << r << std::endl;
-               
-               if (!r.isZero())
+               if (currentWay.isBuilding())
                {
-                  double overlap = r.getArea()/std::max(batiWay.getBoundingBox().getArea(),
-                                                        currentWay.getBoundingBox().getArea());
+                  OSMRectangle r = intersection(currentWay.getBoundingBox(), batiWay.getBoundingBox());
                   
-                  intersections.push_back(std::make_pair(&currentWay, overlap));
+                  //std::cout << "intersection de bati id " << batiWay.getID() << " et current id " << currentWay.getID();
+                  //std::cout << ": " << r << std::endl;
                   
-                  //std::cout << " aire: " << r.getArea();
-                  //std::cout << " recouvrement: " << (unsigned int)((r.getArea()/batiWay.getBoundingBox().getArea())*100);
-                  
-                  if (firstDisplay)
+                  if (!r.isZero())
                   {
-                     firstDisplay = false;
-                     std::cout << "Bati ID " << batiWay.getID() << ", intersection avec: " << std::endl;
+                     double overlap = r.getArea()/std::max(batiWay.getBoundingBox().getArea(),
+                                                           currentWay.getBoundingBox().getArea());
+                     
+                     intersections.push_back(std::make_pair(&currentWay, overlap));
+                     
+                     //std::cout << " aire: " << r.getArea();
+                     //std::cout << " recouvrement: " << (unsigned int)((r.getArea()/batiWay.getBoundingBox().getArea())*100);
+                     
+                     if (firstDisplay)
+                     {
+                        firstDisplay = false;
+                        std::cout << "Bati ID " << batiWay.getID() << ", intersection avec: " << std::endl;
+                     }
+                     std::cout << std::fixed << std::setprecision(2);
+                     std::cout << " - current ID " << currentWay.getID() << ", recouvrement: " << overlap*100 << "%" << std::endl; 
                   }
-                  std::cout << std::fixed << std::setprecision(2);
-                  std::cout << " - current ID " << currentWay.getID() << ", recouvrement: " << overlap*100 << "%" << std::endl; 
+                  //std::cout << std::endl;
                }
-               //std::cout << std::endl;
             }
-         }
-         
-         if (intersections.size() == 0)
-         {
-            okDoc->addWay(batiWay, bati);
-            nbOK++;
-         }
-         else if ((intersections.size() == 1) && (intersections[0].second > kThresholdOK))
-         {
-            OSMWay & fusionWay = fusionDoc->addWay(batiWay, bati);
             
-            fusionWay.importTags(*intersections[0].first, true);
-            nbFusion++;
-         }
-         else if (intersections.size() > 1)
-         {
-            unsigned int nbThresholdOK = 0;
-            unsigned int nbThresholdDoubt = 0;
-            bool noFusion = true;
-            size_t candidateIndex = 0;
-            size_t maxIndex = 0;
-            double maxValue = 0;
-            
-            for (size_t i=0; i<intersections.size(); i++)
+            if (intersections.size() == 0)
             {
-               if (intersections[i].second > kThresholdOK)
-               {
-                  nbThresholdOK++;
-                  candidateIndex = i;
-               }
-               else if (intersections[i].second > kThresholdDoubt)
-               {
-                  nbThresholdDoubt++;
-               }
-               
-               if (intersections[i].second > kThresholdNoFusion)
-                  noFusion = false;
-               
-               if (intersections[i].second > maxValue)
-               {
-                  maxValue = intersections[i].second;
-                  maxIndex = i;
-               }
+               okDoc->addWay(batiWay, bati);
+               nbOK++;
             }
-            
-            if (noFusion)
-            {
-               // No need to import tags, as a corresponding polygon
-               // does not exist in current
-               noFusionDoc->addWay(batiWay, bati);
-               nbNoFusion++;
-            }
-            else if ((nbThresholdOK == 1) && (nbThresholdDoubt == 0))
+            else if ((intersections.size() == 1) && (intersections[0].second > kThresholdOK))
             {
                OSMWay & fusionWay = fusionDoc->addWay(batiWay, bati);
                
-               fusionWay.importTags(*intersections[candidateIndex].first, true);
+               fusionWay.importTags(*intersections[0].first, true);
                nbFusion++;
             }
-            else
+            else if (intersections.size() > 1)
             {
-               std::cout << "Conflit - way OK: " << nbThresholdOK << " - way doute: " << nbThresholdDoubt << std::endl;
-               OSMWay & conflitWay = conflitDoc->addWay(batiWay, bati);
+               unsigned int nbThresholdOK = 0;
+               unsigned int nbThresholdDoubt = 0;
+               bool noFusion = true;
+               size_t candidateIndex = 0;
+               size_t maxIndex = 0;
+               double maxValue = 0;
                
-               conflitWay.importTags(*intersections[maxIndex].first, true);
+               for (size_t i=0; i<intersections.size(); i++)
+               {
+                  if (intersections[i].second > kThresholdOK)
+                  {
+                     nbThresholdOK++;
+                     candidateIndex = i;
+                  }
+                  else if (intersections[i].second > kThresholdDoubt)
+                  {
+                     nbThresholdDoubt++;
+                  }
+                  
+                  if (intersections[i].second > kThresholdNoFusion)
+                     noFusion = false;
+                  
+                  if (intersections[i].second > maxValue)
+                  {
+                     maxValue = intersections[i].second;
+                     maxIndex = i;
+                  }
+               }
+               
+               if (noFusion)
+               {
+                  // No need to import tags, as a corresponding polygon
+                  // does not exist in current
+                  noFusionDoc->addWay(batiWay, bati);
+                  nbNoFusion++;
+               }
+               else if ((nbThresholdOK == 1) && (nbThresholdDoubt == 0))
+               {
+                  OSMWay & fusionWay = fusionDoc->addWay(batiWay, bati);
+                  
+                  fusionWay.importTags(*intersections[candidateIndex].first, true);
+                  nbFusion++;
+               }
+               else
+               {
+                  std::cout << "Conflit - way OK: " << nbThresholdOK << " - way doute: " << nbThresholdDoubt << std::endl;
+                  OSMWay & conflitWay = conflitDoc->addWay(batiWay, bati);
+                  
+                  conflitWay.importTags(*intersections[maxIndex].first, true);
+                  nbConflit++;
+               }
+            }
+            else 
+            {
+               conflitDoc->addWay(batiWay, bati);
                nbConflit++;
             }
          }
-         else 
+         else
          {
-            conflitDoc->addWay(batiWay, bati);
-            nbConflit++;
+            nbExclus++;
+            exclusDoc->addWay(batiWay, bati);
          }
       }
    }
@@ -425,6 +482,9 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
    noFusionDoc->dumpOSM(outputPrefix+std::string(".nofusion.osm"));
    fusionDoc->dumpOSM(outputPrefix+std::string(".fusion.osm"));
    conflitDoc->dumpOSM(outputPrefix+std::string(".conflit.osm"));
+   
+   if (nbExclus > 0)
+      exclusDoc->dumpOSM(outputPrefix+std::string(".exclus.osm"));
    
    /*okDoc->dumpBoundingBoxes(outputPrefix+std::string(".ok.bounds.osm"));
    fusionDoc->dumpBoundingBoxes(outputPrefix+std::string(".fusion.bounds.osm"));
@@ -437,12 +497,14 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
    delete noFusionDoc;
    delete fusionDoc;
    delete conflitDoc;
+   delete exclusDoc;
    
    std::cout << "=======================================" << std::endl;
    std::cout << "Way OK:          " << nbOK << std::endl;
    std::cout << "Way sans fusion: " << nbNoFusion << std::endl;
    std::cout << "Way fusionnees:  " << nbFusion << std::endl;
    std::cout << "Way en conflit:  " << nbConflit << std::endl;
+   std::cout << "Way exclus:      " << nbExclus << std::endl;
    std::cout << "=======================================" << std::endl;
 
 }

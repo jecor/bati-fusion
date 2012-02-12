@@ -51,6 +51,8 @@ public:
    
    OSMWay & addRectangle(const OSMRectangle & rect);
    
+   OSMRectangle getBoundingBox() const;
+   
    void addNodePointerUID(OSMNode * node);
    void addWayPointerUID(OSMWay * way);
    
@@ -64,6 +66,7 @@ private:
    NodesContainer     nodes;
    WaysContainer      ways;
    RelationsContainer relations;
+   OSMRectangle       boundingBox;
 };
 
 void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std::string & outputPrefix);
