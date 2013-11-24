@@ -59,6 +59,8 @@ public:
    
    void importTags(const OSMWay & original, bool avoidSource);
    
+   std::string getTagValueForKey(const std::string & key) const;
+   
 private:
    int            id;
    bool           building;

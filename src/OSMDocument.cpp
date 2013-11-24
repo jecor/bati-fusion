@@ -25,9 +25,10 @@
 #include <iomanip>
 #include "tinyxml.h"
 
-const double kThresholdOK    = 0.80;
-const double kThresholdDoubt = 0.50;
-const double kThresholdNoFusion = 0.10;
+const double      kThresholdOK    = 0.80;
+const double      kThresholdDoubt = 0.50;
+const double      kThresholdNoFusion = 0.10;
+const std::string kCadastreSource = "cadastre-dgi-fr source : Direction G";
 
 OSMDocument::OSMDocument()
 {
@@ -343,12 +344,16 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
    OSMDocument *fusionDoc = new OSMDocument;
    OSMDocument *conflitDoc = new OSMDocument;
    OSMDocument *exclusDoc = new OSMDocument;
+   OSMDocument *noCadastreDoc = new OSMDocument;
+   OSMDocument *noCadastreSourceCadastreDoc = new OSMDocument;
    
    unsigned int nbOK = 0;
    unsigned int nbNoFusion = 0;
    unsigned int nbFusion = 0;
    unsigned int nbConflit = 0;
    unsigned int nbExclus = 0;
+   unsigned int nbNoCadastre = 0;
+   unsigned int nbNoCadastreSourceCadastre = 0;
    
    OSMRectangle bounds = current.getBoundingBox();
    
@@ -477,6 +482,46 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
       }
    }
    
+   for (std::map<int, OSMWay *>::const_iterator itCurrent = current.ways.begin(); itCurrent != current.ways.end(); ++itCurrent)
+   {
+      const OSMWay & currentWay = *(*itCurrent).second;
+      
+      if (currentWay.isBuilding())
+      {
+         bool noCadastre = true;
+         
+         for (std::map<int, OSMWay *>::const_iterator itBati = bati.ways.begin(); itBati != bati.ways.end(); ++itBati)
+         {
+            const OSMWay & batiWay = *(*itBati).second;
+            
+            if (batiWay.isBuilding())
+            {
+               OSMRectangle r = intersection(currentWay.getBoundingBox(), batiWay.getBoundingBox());
+               
+               if (!r.isZero())
+               {
+                 noCadastre = false;
+                 break;
+               }
+            }
+         }
+         
+         if (noCadastre)
+         {
+            if (currentWay.getTagValueForKey("source").find(kCadastreSource) != std::string::npos)
+            {
+               noCadastreSourceCadastreDoc->addWay(currentWay, current);
+               nbNoCadastreSourceCadastre++;       
+            }
+            else
+            {
+               noCadastreDoc->addWay(currentWay, current);
+               nbNoCadastre++;
+            }
+         }
+      }
+  }
+   
    std::cout << "Enregistrement fichiers de sortie..." << std::endl;
    okDoc->dumpOSM(outputPrefix+std::string(".ok.osm"));
    noFusionDoc->dumpOSM(outputPrefix+std::string(".nofusion.osm"));
@@ -485,6 +530,9 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
    
    if (nbExclus > 0)
       exclusDoc->dumpOSM(outputPrefix+std::string(".exclus.osm"));
+      
+   noCadastreSourceCadastreDoc->dumpOSM(outputPrefix+std::string(".nocadastresourcecadastre.osm"));
+   noCadastreDoc->dumpOSM(outputPrefix+std::string(".nocadastre.osm"));
    
    /*okDoc->dumpBoundingBoxes(outputPrefix+std::string(".ok.bounds.osm"));
    fusionDoc->dumpBoundingBoxes(outputPrefix+std::string(".fusion.bounds.osm"));
@@ -499,14 +547,19 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
    delete conflitDoc;
    delete exclusDoc;
    
-   std::cout << "=======================================" << std::endl;
+   delete noCadastreSourceCadastreDoc;
+   delete noCadastreDoc;
+   
+   std::cout << "=========================================================================" << std::endl;
    std::cout << "Way OK:          " << nbOK << std::endl;
    std::cout << "Way sans fusion: " << nbNoFusion << std::endl;
    std::cout << "Way fusionnees:  " << nbFusion << std::endl;
    std::cout << "Way en conflit:  " << nbConflit << std::endl;
    std::cout << "Way exclus:      " << nbExclus << std::endl;
-   std::cout << "=======================================" << std::endl;
-
+   std::cout << "=========================================================================" << std::endl;
+   std::cout << "Way dans OSM mais pas dans le cadastre (hors source=cadastre...): " << nbNoCadastre << std::endl;
+   std::cout << "Way dans OSM mais pas dans le cadastre (source=cadastre...):      " << nbNoCadastreSourceCadastre << std::endl;
+   std::cout << "=========================================================================" << std::endl;
 }
 
 

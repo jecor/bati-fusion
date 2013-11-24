@@ -53,6 +53,15 @@ recherche si un bâtiment existe déjà dans la base (calque-courant) au même e
 
 En raison de la difficulté à calculer exactement les intersections de polygones (algorithme coûteux en temps), bati-fusion se base sur les rectangles englobant les polygones. Cette méthode produit évidemment de faux positifs (fichier No Fusion) ainsi que des faux négatifs (fichier Conflit).
 
+De plus, de façon à faciliter les mises à jour du bati après un premier import, bati-fusion effectue également un tri des données dans l'autre sens, pour vérifier les bâtiments existant déjà dans la base (calque-courant) mais n'existant pas dans le calque-bati. En sortie, bati-fusion produit deux calques contenant des batis de la base:
+
+- Dans le fichier No Cadastre Source Cadastre (.nocadastresourcecadastre.osm): les bâtiments de la base qui ne sont pas dans le cadastre et qui ont un tag "source=" mentionnant le cadastre (contenant: "cadastre-dgi-fr source : Direction G"). Ces bâtiments peuvent donc provenir:
+  - D'un précédent import bati à partir de import-bati,
+  - D'un tracé fait à la main par dessus un calque du plugin "Cadastre" de JOSM (qui ajoute cette source automatiquement).
+  Il n'y pas de moyen de distinguer les deux types de bâtiments (à part en superposant avec un téléchargement du bâti pour vérifier l'exacte correspondance).
+  
+- Dans le fichier No Cadastre: les bâtiments de la base qui ne sont pas dans le cadastre et qui n'ont pas de tag source, ou un tag source ne mentionnant pas le cadastre. Il s'agit de bâtiment rajoutés à la main depuis d'autres sources.
+
 Critères considérées pour la version actuelle:
 
 - Polygone placé dans le fichier Fusion: 

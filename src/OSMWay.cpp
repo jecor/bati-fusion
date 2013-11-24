@@ -199,3 +199,17 @@ void OSMWay::importTags(const OSMWay & original, bool avoidSource)
    }
 }
 
+std::string OSMWay::getTagValueForKey(const std::string & key) const
+{
+   TagsConstIterator it = tags.find(key);
+  
+   if (it == tags.end())
+   {
+      return std::string();
+   }
+   else
+   {
+      return (*it).second;
+   }
+}
+
