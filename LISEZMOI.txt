@@ -1,6 +1,6 @@
 --------------------------------------------
-bati-fusion 0.2
-Copyright (c) 2010-2011 Jérôme Cornet
+bati-fusion 0.2.x
+Copyright (c) 2010-2013 Jérôme Cornet
 --------------------------------------------
 
 À quoi ça sert?

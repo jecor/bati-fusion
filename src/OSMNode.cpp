@@ -1,6 +1,6 @@
 /*
  * bati-fusion - Utilitaire de fusion Open Street Map  
- * Copyright (c) 2010-2011 Jérôme Cornet
+ * Copyright (c) 2010-2013 Jérôme Cornet
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
