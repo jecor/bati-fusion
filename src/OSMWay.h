@@ -64,6 +64,11 @@ public:
 private:
    int            id;
    bool           building;
+   std::string    timestamp;
+   std::string    uid;
+   std::string    user;
+   std::string    version;
+   std::string    changeset;
    NodesContainer nodes;
    TagsContainer  tags;
 };

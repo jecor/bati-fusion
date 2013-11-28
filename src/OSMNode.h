@@ -62,6 +62,11 @@ private:
    double        y;
    std::string  *x_string;
    std::string  *y_string;
+   std::string   timestamp;
+   std::string   uid;
+   std::string   user;
+   std::string   version;
+   std::string   changeset;
    TagsContainer tags;
    
    void clone(const OSMNode & original);

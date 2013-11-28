@@ -52,6 +52,12 @@ OSMNode::OSMNode(TiXmlElement *element) :
    element->QueryStringAttribute("lat", &ly_string);
    element->QueryStringAttribute("lon", &lx_string);
    
+   element->QueryStringAttribute("timestamp", &timestamp);
+   element->QueryStringAttribute("uid",       &uid);
+   element->QueryStringAttribute("user",      &user);
+   element->QueryStringAttribute("version",   &version);
+   element->QueryStringAttribute("changeset", &changeset);
+   
    x_string = new std::string(lx_string);
    y_string = new std::string(ly_string);
    
@@ -99,6 +105,12 @@ void OSMNode::clone(const OSMNode & original)
       y_string = new std::string(*original.y_string);
    else
       y_string = 0;
+      
+   timestamp = original.timestamp;
+   uid       = original.uid;
+   user      = original.user;
+   version   = original.version;
+   changeset = original.changeset;
    
    tags = original.tags;
 }
@@ -139,6 +151,27 @@ void OSMNode::dumpOSM(std::ostream & os)
       os << x;
    
    os << "'";
+   
+   if (!timestamp.empty())
+   {
+      os << " timestamp='" << timestamp << "'";
+   }
+   if (!uid.empty())
+   {
+      os << " uid='" << uid << "'";
+   }
+   if (!user.empty())
+   {
+      os << " user='" << user << "'";
+   }
+   if (!version.empty())
+   {
+      os << " version='" << version << "'";
+   }
+   if (!changeset.empty())
+   {
+      os << " changeset='" << changeset << "'";
+   }
    
    if (tags.empty())
       os << " />\n";

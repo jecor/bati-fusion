@@ -36,6 +36,12 @@ id(0)
    
    element->QueryIntAttribute("id", &id);
    
+   element->QueryStringAttribute("timestamp", &timestamp);
+   element->QueryStringAttribute("uid",       &uid);
+   element->QueryStringAttribute("user",      &user);
+   element->QueryStringAttribute("version",   &version);
+   element->QueryStringAttribute("changeset", &changeset);
+   
    TiXmlHandle refH(element);
    TiXmlElement *ref = refH.FirstChild().Element();
    
@@ -113,7 +119,30 @@ void OSMRelation::addMemberPointer(const std::string & role, OSMWay *way)
 
 void OSMRelation::dumpOSM(std::ostream & os)
 {
-   os << "  <relation id='" << id << "' visible='true'>\n";
+   os << "  <relation id='" << id << "' visible='true'";
+   
+   if (!timestamp.empty())
+   {
+      os << " timestamp='" << timestamp << "'";
+   }
+   if (!uid.empty())
+   {
+      os << " uid='" << uid << "'";
+   }
+   if (!user.empty())
+   {
+      os << " user='" << user << "'";
+   }
+   if (!version.empty())
+   {
+      os << " version='" << version << "'";
+   }
+   if (!changeset.empty())
+   {
+      os << " changeset='" << changeset << "'";
+   }
+   
+   os << ">\n";
    
    for (MembersConstIterator it = members.begin(); it != members.end(); ++it)
    {

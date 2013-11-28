@@ -39,6 +39,12 @@ OSMWay::OSMWay(const std::map<int, OSMNode *> & input_nodes, TiXmlElement * elem
    
    element->QueryIntAttribute("id", &id);
    
+   element->QueryStringAttribute("timestamp", &timestamp);
+   element->QueryStringAttribute("uid",       &uid);
+   element->QueryStringAttribute("user",      &user);
+   element->QueryStringAttribute("version",   &version);
+   element->QueryStringAttribute("changeset", &changeset);
+   
    TiXmlHandle refH(element);
    TiXmlElement *ref = refH.FirstChild().Element();
    
@@ -86,6 +92,13 @@ OSMWay::OSMWay(const OSMWay & way)
 {
    id = way.id;
    building = way.building;
+   
+   timestamp = way.timestamp;
+   uid       = way.uid;
+   user      = way.user;
+   version   = way.version;
+   changeset = way.changeset;
+   
    tags = way.tags;
    
    for (size_t i=0; i<way.nodes.size(); i++)
@@ -142,7 +155,30 @@ void OSMWay::addNodePointer(OSMNode * node)
 
 void OSMWay::dumpOSM(std::ostream & os)
 {
-   os << "  <way id='" << id << "' visible='true'>\n";
+   os << "  <way id='" << id << "' visible='true'";
+   
+   if (!timestamp.empty())
+   {
+      os << " timestamp='" << timestamp << "'";
+   }
+   if (!uid.empty())
+   {
+      os << " uid='" << uid << "'";
+   }
+   if (!user.empty())
+   {
+      os << " user='" << user << "'";
+   }
+   if (!version.empty())
+   {
+      os << " version='" << version << "'";
+   }
+   if (!changeset.empty())
+   {
+      os << " changeset='" << changeset << "'";
+   }
+   
+   os << ">\n";
    
    for (size_t i=0; i<nodes.size(); ++i)
    {
