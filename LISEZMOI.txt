@@ -46,7 +46,6 @@ bati-fusion parcourt tous les polygones "bâtiments" (building=yes) de calque-ba
 recherche si un bâtiment existe déjà dans la base (calque-courant) au même endroit. En sortie, bati-fusion réalise un classement et une fusion éventuelle des informations:
 
 - Dans le fichier OK (.ok.osm): les bâtiments qui n'ont aucune intersection avec un bâtiment existant.
-- Dans le fichier No Fusion (.nofusion.osm): les bâtiments qui ont a priori une intersection avec un bâtiment existant, mais considérés comme dans la marge d'erreur de l'algorithme d'intersection (voir plus loin sur les intersections). Il est probable que ces bâtiments n'aient pas d'intersection du tout avec un bâti existant, mais il est nécessaire d'effectuer une vérification manuelle.
 - Dans le fichier Fusion (.fusion.osm): les bâtiments qui sont en intersection franche avec un bâtiment existant dans la base. Dans ce cas, les tags éventuels du bâtiment de la base, non relatifs au bâti (building=) et à la source (source=) sont importés, pour les nœuds et pour le polygone en lui même.
 - Dans le fichier Conflit (.conflit.osm): les bâtiments pour lesquels l'outil n'a pas pu prendre de décisions. Les bâtiments sont recopiés tels quels, sans import de tags.
 - Dans le fichier Exclus (.exclus.osm): les bâtiments en dehors de la zone couverte par le calque courant. Il est fortement recommandé de toujours réaliser la fusion en prenant un calque courant couvrant toute la commune, mais sur certaines zones "chargées", cela n'est pas possible. Dans ce cas, seuls les polygones situés dans la zone couverte sont considérés pour la fusion et il est nécessaire d'être de réaliser la fusion en plusieur étapes. La zone couverte considérée est celle déclarée dans le calque courant (sous JOSM les partie hors de cette zone sont hachurées).
@@ -67,8 +66,6 @@ Critères considérées pour la version actuelle:
 - Polygone placé dans le fichier Fusion: 
   - intersection avec au maximum un polygone existant, surfaces des rectangles englobant se recouvrant à 80% ou plus. OU
   - intersection avec plusieurs polygones, mais un seul polygone dont le recouvrement est à 80% ou plus, et aucun autre polygone se recouvrant à plus de 50%.
-- Polygone placé dans le fichier NoFusion: i
-  - intersection avec plusieurs polygones, mais aucun qui ne dépasse 10% de recouvrement.
 - Polygone placé dans le fichier Conflit: tous les autres.
 
 Limitations

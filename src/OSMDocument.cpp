@@ -340,7 +340,6 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
    std::cout << "Fusion..." << std::endl;
    
    OSMDocument *okDoc = new OSMDocument;
-   OSMDocument *noFusionDoc = new OSMDocument;
    OSMDocument *fusionDoc = new OSMDocument;
    OSMDocument *conflitDoc = new OSMDocument;
    OSMDocument *exclusDoc = new OSMDocument;
@@ -348,7 +347,6 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
    OSMDocument *noCadastreSourceCadastreDoc = new OSMDocument;
    
    unsigned int nbOK = 0;
-   unsigned int nbNoFusion = 0;
    unsigned int nbFusion = 0;
    unsigned int nbConflit = 0;
    unsigned int nbExclus = 0;
@@ -418,7 +416,6 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
             {
                unsigned int nbThresholdOK = 0;
                unsigned int nbThresholdDoubt = 0;
-               bool noFusion = true;
                size_t candidateIndex = 0;
                size_t maxIndex = 0;
                double maxValue = 0;
@@ -435,9 +432,6 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
                      nbThresholdDoubt++;
                   }
                   
-                  if (intersections[i].second > kThresholdNoFusion)
-                     noFusion = false;
-                  
                   if (intersections[i].second > maxValue)
                   {
                      maxValue = intersections[i].second;
@@ -445,14 +439,7 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
                   }
                }
                
-               if (noFusion)
-               {
-                  // No need to import tags, as a corresponding polygon
-                  // does not exist in current
-                  noFusionDoc->addWay(batiWay, bati);
-                  nbNoFusion++;
-               }
-               else if ((nbThresholdOK == 1) && (nbThresholdDoubt == 0))
+               if ((nbThresholdOK == 1) && (nbThresholdDoubt == 0))
                {
                   OSMWay & fusionWay = fusionDoc->addWay(batiWay, bati);
                   
@@ -524,7 +511,6 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
    
    std::cout << "Enregistrement fichiers de sortie..." << std::endl;
    okDoc->dumpOSM(outputPrefix+std::string(".ok.osm"));
-   noFusionDoc->dumpOSM(outputPrefix+std::string(".nofusion.osm"));
    fusionDoc->dumpOSM(outputPrefix+std::string(".fusion.osm"));
    conflitDoc->dumpOSM(outputPrefix+std::string(".conflit.osm"));
    
@@ -542,7 +528,6 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
    current.dumpBoundingBoxes("boundsCurrent.osm");*/
    
    delete okDoc;
-   delete noFusionDoc;
    delete fusionDoc;
    delete conflitDoc;
    delete exclusDoc;
@@ -552,7 +537,6 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
    
    std::cout << "=========================================================================" << std::endl;
    std::cout << "Way OK:          " << nbOK << std::endl;
-   std::cout << "Way sans fusion: " << nbNoFusion << std::endl;
    std::cout << "Way fusionnees:  " << nbFusion << std::endl;
    std::cout << "Way en conflit:  " << nbConflit << std::endl;
    std::cout << "Way exclus:      " << nbExclus << std::endl;
