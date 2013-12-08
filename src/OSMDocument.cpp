@@ -361,7 +361,7 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
       
       if (batiWay.isBuilding())
       {
-         if (batiWay.getBoundingBox().isInside(bounds))
+         if (!intersection(batiWay.getBoundingBox(), bounds).isZero())
          {
             std::vector<std::pair<const OSMWay *, double> > intersections;
             
