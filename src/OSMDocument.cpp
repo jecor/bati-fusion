@@ -335,7 +335,7 @@ void OSMDocument::dumpBoundingBoxes(const std::string & filename) const
 
 
 
-void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std::string & outputPrefix)
+void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std::string & outputPrefix, const unsigned int verbose)
 {
    std::cout << "Fusion..." << std::endl;
    
@@ -354,6 +354,11 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
    unsigned int nbNoCadastreSourceCadastre = 0;
    
    OSMRectangle bounds = current.getBoundingBox();
+   
+   if (verbose)
+   {
+     std::cout << "Limites calque courant: " << bounds << std::endl;
+   }
    
    for (std::map<int, OSMWay *>::const_iterator itBati = bati.ways.begin(); itBati != bati.ways.end(); ++itBati)
    {
@@ -388,13 +393,16 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
                      //std::cout << " aire: " << r.getArea();
                      //std::cout << " recouvrement: " << (unsigned int)((r.getArea()/batiWay.getBoundingBox().getArea())*100);
                      
-                     if (firstDisplay)
+                     if (verbose)
                      {
-                        firstDisplay = false;
-                        std::cout << "Bati ID " << batiWay.getID() << ", intersection avec: " << std::endl;
+                        if (firstDisplay)
+                        {
+                           firstDisplay = false;
+                           std::cout << "Bati ID " << batiWay.getID() << ", intersection avec: " << std::endl;
+                        }
+                        std::cout << std::fixed << std::setprecision(2);
+                        std::cout << " - current ID " << currentWay.getID() << ", recouvrement: " << overlap*100 << "%" << std::endl; 
                      }
-                     std::cout << std::fixed << std::setprecision(2);
-                     std::cout << " - current ID " << currentWay.getID() << ", recouvrement: " << overlap*100 << "%" << std::endl; 
                   }
                   //std::cout << std::endl;
                }
@@ -448,7 +456,10 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
                }
                else
                {
-                  std::cout << "Conflit - way OK: " << nbThresholdOK << " - way doute: " << nbThresholdDoubt << std::endl;
+                  if (verbose)
+                  {
+                     std::cout << "Conflit - way OK: " << nbThresholdOK << " - way doute: " << nbThresholdDoubt << std::endl;
+                  }
                   OSMWay & conflitWay = conflitDoc->addWay(batiWay, bati);
                   
                   conflitWay.importTags(*intersections[maxIndex].first, true);

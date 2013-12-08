@@ -60,7 +60,7 @@ public:
    
    void dumpBoundingBoxes(const std::string & filename) const;
    
-   friend void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std::string & outputPrefix);
+   friend void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std::string & outputPrefix, const unsigned int verbose);
    
 private:
    NodesContainer     nodes;
@@ -69,7 +69,7 @@ private:
    OSMRectangle       boundingBox;
 };
 
-void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std::string & outputPrefix);
+void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std::string & outputPrefix, const unsigned int verbose);
 void tagFusion(const OSMWay & source, OSMWay & destination);
 
 #endif

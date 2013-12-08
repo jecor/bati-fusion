@@ -22,9 +22,10 @@
 
 int main(int argc, char * const argv[]) 
 {
-   if (argc != 4)
+   if (argc < 4)
    {
-      std::cerr << "Utilisation: " << argv[0] << " calque-bati calque-courant prefixe-sortie" << std::endl;
+      std::cerr << "Utilisation: " << argv[0] << " calque-bati calque-courant prefixe-sortie [options]" << std::endl;
+      std::cerr << "     -v   Messages verbeux" << std::endl;
       return 1;
    }
    
@@ -34,7 +35,7 @@ int main(int argc, char * const argv[])
    std::cout << "Chargement de " << argv[2] << "..." << std::endl;
    OSMDocument *osmCurrent = new OSMDocument(argv[2]);
    
-   batiFusion(*osmBatiDoc, *osmCurrent, argv[3]);
+   batiFusion(*osmBatiDoc, *osmCurrent, argv[3], argv[4] && (argv[4] == std::string("-v")));
    
    delete osmBatiDoc;
    delete osmCurrent;
