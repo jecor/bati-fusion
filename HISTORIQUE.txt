@@ -2,6 +2,14 @@
 Historique de bati-fusion
 --------------------------------------------
 
+future version 0.3
+---------------------------------------------
+- Correction prise en compte de la zone couverte par le calque courant: il peut arriver qu'un bâtiment intéressant ait besoin d'être considéré, même s'il n'est pas strictement contenu dans la zone du calque courant.
+- Ajout de deux sorties supplémentaires:
+  - Fichier No Cadastre Source Cadastre (.nocadastresourcecadastre.osm): les bâtiments de la base qui ne sont pas dans le cadastre et qui ont un tag "source=" mentionnant le cadastre.
+- Dans le fichier No Cadastre: bâtiments de la base qui ne sont pas dans la cadastre et sans source mentionnant le cadastre).
+- Suppression de la sortie No fusion, qui est maintenant contenue dans la sortie "Conflit".
+
 version 0.2
 ---------------------------------------------
 - Issue #1: prise en compte de la zone couverte par le calque courant. Les polygones hors-zone sont placés dans un fichier séparé.
