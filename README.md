@@ -11,9 +11,7 @@ Bienvenue sur le github de bati-fusion. bati-fusion est un utilitaire pour Open 
 
 --
 
-Pour telecharger:
+Pour telecharger les sources et les binaires: cliquer sur "Releases".
 
-* les sources: cliquer sur "Tags"
-* les binaires: cliquer sur "Downloads".
 
 
