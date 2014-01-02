@@ -18,13 +18,14 @@
 
 #include "utils.h"
 
-void try_escape(std::string & source, const char fchar, const char *escape_sequence)
+void try_escape(std::string & source, const char fchar, const std::string & escape_sequence)
 {
-   std::string::size_type pos;
+   std::string::size_type pos = 0;
    
-   while ((pos = source.find(fchar)) != std::string::npos)
+   while ((pos = source.find(fchar, pos)) != std::string::npos)
    {
       source.replace(pos, 1, escape_sequence);
+      pos += escape_sequence.length();
    }
 }
 

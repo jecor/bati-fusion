@@ -9,6 +9,7 @@ future version 0.3
   - Fichier No Cadastre Source Cadastre (.nocadastresourcecadastre.osm): les bâtiments de la base qui ne sont pas dans le cadastre et qui ont un tag "source=" mentionnant le cadastre.
 - Dans le fichier No Cadastre: bâtiments de la base qui ne sont pas dans la cadastre et sans source mentionnant le cadastre).
 - Suppression de la sortie No fusion, qui est maintenant contenue dans la sortie "Conflit".
+- Correction d'un bug au moment de la sauvegarde des fichiers (formatage XML) qui provoquait une utilisation CPU 100% et empêchait le processus de se terminer.
 
 version 0.2
 ---------------------------------------------
