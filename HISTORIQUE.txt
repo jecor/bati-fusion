@@ -17,7 +17,7 @@ http://wiki.openstreetmap.org/wiki/64-bit_Identifiers
 version 0.2
 ---------------------------------------------
 - Issue #1: prise en compte de la zone couverte par le calque courant. Les polygones hors-zone sont placés dans un fichier séparé.
-- Issue #2: les bâtiments taggués avec une valeur autre que "yes" sont maintenant pris en compte.
+- Issue #2: les bâtiments tagués avec une valeur autre que "yes" sont maintenant pris en compte.
 - Correction d'un bug dans la recopie des Rectangles internes (pouvant résulter en un crash à la fin de l'exécution).
 - Correction du LISEZ-MOI pour ne pas perdre les utilisateurs des archives binaires (qui n'ont pas besoin de taper make).
 
