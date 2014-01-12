@@ -546,15 +546,15 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
    delete noCadastreSourceCadastreDoc;
    delete noCadastreDoc;
    
-   std::cout << "=========================================================================" << std::endl;
-   std::cout << "Way OK:          " << nbOK << std::endl;
-   std::cout << "Way fusionnees:  " << nbFusion << std::endl;
-   std::cout << "Way en conflit:  " << nbConflit << std::endl;
-   std::cout << "Way exclus:      " << nbExclus << std::endl;
-   std::cout << "=========================================================================" << std::endl;
-   std::cout << "Way dans OSM mais pas dans le cadastre (hors source=cadastre...): " << nbNoCadastre << std::endl;
-   std::cout << "Way dans OSM mais pas dans le cadastre (source=cadastre...):      " << nbNoCadastreSourceCadastre << std::endl;
-   std::cout << "=========================================================================" << std::endl;
+   std::cout << "===========================================================================" << std::endl;
+   std::cout << "Batiments OK:          " << nbOK << std::endl;
+   std::cout << "Batiments fusionnes:   " << nbFusion << std::endl;
+   std::cout << "Batiments en conflit:  " << nbConflit << std::endl;
+   std::cout << "Batiments exclus:      " << nbExclus << std::endl;
+   std::cout << "===========================================================================" << std::endl;
+   std::cout << "Batiments dans OSM mais pas dans le cadastre (hors source=cadastre...): " << nbNoCadastre << std::endl;
+   std::cout << "Batiments dans OSM mais pas dans le cadastre (source=cadastre...):      " << nbNoCadastreSourceCadastre << std::endl;
+   std::cout << "===========================================================================" << std::endl;
 }
 
 
