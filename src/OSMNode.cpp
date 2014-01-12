@@ -20,6 +20,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <iomanip>
+#include <sstream>
 #include "utils.h"
 
 OSMNode::OSMNode(const double x_, const double y_) :
@@ -44,7 +45,15 @@ OSMNode::OSMNode(TiXmlElement *element) :
       throw std::runtime_error("wrong node");
    }
    
-   element->QueryIntAttribute("id", &id);
+   std::string id_string;
+   
+   element->QueryStringAttribute("id", &id_string);
+   
+   std::stringstream ss;
+   
+   ss << id_string;
+   ss >> id;
+   
    element->QueryDoubleAttribute("lat", &y);
    element->QueryDoubleAttribute("lon", &x);
    

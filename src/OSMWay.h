@@ -19,6 +19,7 @@
 #ifndef OSM_WAY_H
 #define OSM_WAY_H
 
+#include <inttypes.h>
 #include <map>
 #include <vector>
 #include "tinyxml.h"
@@ -39,11 +40,11 @@ public:
    
    OSMWay();
    
-   OSMWay(const std::map<int, OSMNode *> & nodes, TiXmlElement * element);
+   OSMWay(const std::map<int64_t, OSMNode *> & nodes, TiXmlElement * element);
    OSMWay(const OSMWay & way);
    
-   int getID() const           { return id;  }
-   void setID(const int value) { id = value; }
+   int64_t getID() const           { return id;  }
+   void setID(const int64_t value) { id = value; }
    
    OSMRectangle getBoundingBox() const;
    
@@ -62,7 +63,7 @@ public:
    std::string getTagValueForKey(const std::string & key) const;
    
 private:
-   int            id;
+   int64_t        id;
    bool           building;
    std::string    timestamp;
    std::string    uid;

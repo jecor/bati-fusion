@@ -10,6 +10,9 @@ future version 0.3
 - Dans le fichier No Cadastre: bâtiments de la base qui ne sont pas dans la cadastre et sans source mentionnant le cadastre).
 - Suppression de la sortie No fusion, qui est maintenant contenue dans la sortie "Conflit".
 - Correction d'un bug au moment de la sauvegarde des fichiers (formatage XML) qui provoquait une utilisation CPU 100% et empêchait le processus de se terminer.
+- Correction d'un bug lié à la manipulation des identifiants numériques des objets OSM en 32-bit (alors que les identifiants d'objets doivent être sur 64-bit, voir:
+http://wiki.openstreetmap.org/wiki/64-bit_Identifiers
+). Ce bug résultait notamment en l'absence de détection de conflits sur certaines plateformes (Linux 32-bit notamment).
 
 version 0.2
 ---------------------------------------------

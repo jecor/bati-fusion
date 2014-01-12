@@ -186,7 +186,7 @@ OSMWay & OSMDocument::addRectangle(const OSMRectangle & rect)
 
 void OSMDocument::addNodePointerUID(OSMNode * node)
 {
-   int newID = -1;
+   int64_t newID = -1;
    
    while ((nodes.find(newID) != nodes.end()) ||
           (ways.find(newID) != ways.end()))
@@ -200,7 +200,7 @@ void OSMDocument::addNodePointerUID(OSMNode * node)
 
 void OSMDocument::addWayPointerUID(OSMWay * way)
 {
-   int newID = -1;
+   int64_t newID = -1;
    
    while ((ways.find(newID) != ways.end()) ||
           (nodes.find(newID) != nodes.end()))
@@ -316,9 +316,9 @@ void OSMDocument::dumpBoundingBoxes(const std::string & filename) const
 
 /*void checkOverlap(const OSMDocument & d1, const OSMDocument & d2)
 {
-   for (std::map<int, OSMWay *>::const_iterator itd2 = d2.ways.begin(); itd2 != d2.ways.end(); ++itd2)
+   for (std::map<int64_t, OSMWay *>::const_iterator itd2 = d2.ways.begin(); itd2 != d2.ways.end(); ++itd2)
    {
-      for (std::map<int, OSMWay *>::const_iterator itd1 = d1.ways.begin(); itd1 != d1.ways.end(); ++itd1)
+      for (std::map<int64_t, OSMWay *>::const_iterator itd1 = d1.ways.begin(); itd1 != d1.ways.end(); ++itd1)
       {
          const OSMWay & w1 = *(*itd1).second;
          const OSMWay & w2 = *(*itd2).second;
@@ -360,7 +360,7 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
      std::cout << "Limites calque courant: " << bounds << std::endl;
    }
    
-   for (std::map<int, OSMWay *>::const_iterator itBati = bati.ways.begin(); itBati != bati.ways.end(); ++itBati)
+   for (std::map<int64_t, OSMWay *>::const_iterator itBati = bati.ways.begin(); itBati != bati.ways.end(); ++itBati)
    {
       const OSMWay & batiWay = *(*itBati).second;
       
@@ -372,7 +372,7 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
             
             bool firstDisplay = true;
             
-            for (std::map<int, OSMWay *>::const_iterator itCurrent = current.ways.begin(); itCurrent != current.ways.end(); ++itCurrent)
+            for (std::map<int64_t, OSMWay *>::const_iterator itCurrent = current.ways.begin(); itCurrent != current.ways.end(); ++itCurrent)
             {
                const OSMWay & currentWay = *(*itCurrent).second;
                
@@ -480,7 +480,7 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
       }
    }
    
-   for (std::map<int, OSMWay *>::const_iterator itCurrent = current.ways.begin(); itCurrent != current.ways.end(); ++itCurrent)
+   for (std::map<int64_t, OSMWay *>::const_iterator itCurrent = current.ways.begin(); itCurrent != current.ways.end(); ++itCurrent)
    {
       const OSMWay & currentWay = *(*itCurrent).second;
       
@@ -488,7 +488,7 @@ void batiFusion(const OSMDocument & bati, const OSMDocument & current, const std
       {
          bool noCadastre = true;
          
-         for (std::map<int, OSMWay *>::const_iterator itBati = bati.ways.begin(); itBati != bati.ways.end(); ++itBati)
+         for (std::map<int64_t, OSMWay *>::const_iterator itBati = bati.ways.begin(); itBati != bati.ways.end(); ++itBati)
          {
             const OSMWay & batiWay = *(*itBati).second;
             

@@ -19,6 +19,7 @@
 #ifndef OSM_DOCUMENT_H
 #define OSM_DOCUMENT_H
 
+#include <inttypes.h>
 #include <map>
 #include "OSMNode.h"
 #include "OSMWay.h"
@@ -27,15 +28,15 @@
 class OSMDocument
 {
 public:
-   typedef std::map<int, OSMNode *>           NodesContainer;
+   typedef std::map<int64_t, OSMNode *>       NodesContainer;
    typedef NodesContainer::const_iterator     NodesConstIterator;
    typedef NodesContainer::iterator           NodesIterator;
    
-   typedef std::map<int, OSMWay *>            WaysContainer;
+   typedef std::map<int64_t, OSMWay *>        WaysContainer;
    typedef WaysContainer::const_iterator      WaysConstIterator;
    typedef WaysContainer::iterator            WaysIterator;
    
-   typedef std::map<int, OSMRelation *>       RelationsContainer;
+   typedef std::map<int64_t, OSMRelation *>   RelationsContainer;
    typedef RelationsContainer::const_iterator RelationsConstIterator;
    typedef RelationsContainer::iterator       RelationsIterator;
    

@@ -19,6 +19,7 @@
 #ifndef OSM_RELATION_H
 #define OSM_RELATION_H
 
+#include <inttypes.h>
 #include <vector>
 #include "tinyxml.h"
 #include "OSMWay.h"
@@ -37,10 +38,10 @@ public:
    
    OSMRelation();
    
-   OSMRelation(const std::map<int, OSMWay *> & ways, TiXmlElement * element);
+   OSMRelation(const std::map<int64_t, OSMWay *> & ways, TiXmlElement * element);
    
-   int getID() const           { return id;  }
-   void setID(const int value) { id = value; }
+   int64_t getID() const           { return id;  }
+   void setID(const int64_t value) { id = value; }
       
    bool isMultipolygon() const;   
    
@@ -57,7 +58,7 @@ public:
    void dumpOSM(std::ostream & os);
       
 private:
-   int              id;
+   int64_t          id;
    std::string      timestamp;
    std::string      uid;
    std::string      user;

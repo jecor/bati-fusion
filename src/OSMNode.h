@@ -19,6 +19,7 @@
 #ifndef OSM_NODE_H
 #define OSM_NODE_H
 
+#include <inttypes.h>
 #include "tinyxml.h"
 #include <map>
 #include <string>
@@ -37,8 +38,8 @@ public:
    OSMNode & operator=(const OSMNode & original);
    ~OSMNode();
    
-   int getID() const            { return id;  }
-   void setID(const int value)  { id = value; }
+   int64_t getID() const            { return id;  }
+   void setID(const int64_t value)  { id = value; }
    
    double getX() const { return x; }
    double getY() const { return y; }
@@ -57,7 +58,7 @@ public:
    friend double squareDistance(const OSMNode & op1, const OSMNode & op2);
    
 private:
-   int           id;
+   int64_t       id;
    double        x;
    double        y;
    std::string  *x_string;

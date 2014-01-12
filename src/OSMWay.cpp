@@ -19,6 +19,7 @@
 #include "OSMWay.h"
 #include <stdexcept>
 #include <iostream>
+#include <sstream>
 #include "utils.h"
 
 OSMWay::OSMWay() :
@@ -27,7 +28,7 @@ OSMWay::OSMWay() :
 {
 }
 
-OSMWay::OSMWay(const std::map<int, OSMNode *> & input_nodes, TiXmlElement * element) :
+OSMWay::OSMWay(const std::map<int64_t, OSMNode *> & input_nodes, TiXmlElement * element) :
    id(0),
    building(false)
 {
@@ -37,7 +38,14 @@ OSMWay::OSMWay(const std::map<int, OSMNode *> & input_nodes, TiXmlElement * elem
       throw std::runtime_error("wrong way");
    }
    
-   element->QueryIntAttribute("id", &id);
+   std::string id_string;
+   
+   element->QueryStringAttribute("id", &id_string);
+   
+   std::stringstream ss;
+   
+   ss << id_string;
+   ss >> id;
    
    element->QueryStringAttribute("timestamp", &timestamp);
    element->QueryStringAttribute("uid",       &uid);
@@ -52,17 +60,25 @@ OSMWay::OSMWay(const std::map<int, OSMNode *> & input_nodes, TiXmlElement * elem
    {
       if (ref->Value() == std::string("nd"))
       {
-         int refID = 0;
-         ref->QueryIntAttribute("ref", &refID);
-         
-         std::map<int, OSMNode *>::const_iterator it = input_nodes.find(refID);
+         int64_t     refID = 0;
+         std::string refID_string;
+   
+         ref->QueryStringAttribute("ref", &refID_string);
+   
+         std::stringstream ss;
+   
+         ss << refID_string;
+         ss >> refID;
+                  
+         std::map<int64_t, OSMNode *>::const_iterator it = input_nodes.find(refID);
          if (it != input_nodes.end())
          {
             nodes.push_back((*it).second);
          }
          else 
          {
-            std::cerr << "Node id " << refID << " not found in the list of nodes!" << std::endl;
+            std::cerr << "Node id " << refID << " not found in the list of nodes (when parsing way id ";
+            std::cerr << id << ")!" << std::endl;
             throw std::runtime_error("node id not found");
          }
       }

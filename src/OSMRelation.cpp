@@ -19,13 +19,14 @@
 #include "OSMRelation.h"
 #include <stdexcept>
 #include <iostream>
+#include <sstream>
 #include "utils.h"
 
 OSMRelation::OSMRelation()
 {
 }
 
-OSMRelation::OSMRelation(const std::map<int, OSMWay *> & input_ways, TiXmlElement * element) :
+OSMRelation::OSMRelation(const std::map<int64_t, OSMWay *> & input_ways, TiXmlElement * element) :
 id(0)
 {
    if (element->Value() != std::string("relation"))
@@ -34,7 +35,14 @@ id(0)
       throw std::runtime_error("wrong relation");
    }
    
-   element->QueryIntAttribute("id", &id);
+   std::string id_string;
+   
+   element->QueryStringAttribute("id", &id_string);
+   
+   std::stringstream ss;
+   
+   ss << id_string;
+   ss >> id;
    
    element->QueryStringAttribute("timestamp", &timestamp);
    element->QueryStringAttribute("uid",       &uid);
@@ -49,10 +57,17 @@ id(0)
    {
       if (ref->Value() == std::string("member"))
       {
-         int refID = 0;
-         ref->QueryIntAttribute("ref", &refID);
+         int64_t     refID = 0;
+         std::string refID_string;
+   
+         ref->QueryStringAttribute("ref", &refID_string);
+   
+         std::stringstream ss;
+   
+         ss << refID_string;
+         ss >> refID;
          
-         std::map<int, OSMWay *>::const_iterator it = input_ways.find(refID);
+         std::map<int64_t, OSMWay *>::const_iterator it = input_ways.find(refID);
          if (it != input_ways.end())
          {
             std::string role;
